@@ -11,8 +11,9 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private int eventActvityCode = 1;
+    private int guestActivityCode = 2;
     private Button eventButton;
-
+    private Button guestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,6 @@ public class MainActivity extends Activity {
         }
 
         eventButton = (Button) findViewById(R.id.eventButton);
-
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,6 +37,14 @@ public class MainActivity extends Activity {
             }
         });
 
+        guestButton = (Button) findViewById(R.id.guestButton);
+        guestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GuestActivity.class);
+                startActivityForResult(intent, guestActivityCode);
+            }
+        });
     }
 
     @Override
@@ -45,6 +53,11 @@ public class MainActivity extends Activity {
             if (data != null) {
                 String eventName = data.getStringExtra("EVENT-NAME");
                 eventButton.setText(eventName);
+            }
+        } else if (requestCode == guestActivityCode) {
+            if (data != null) {
+                String guestName = data.getStringExtra("GUEST-NAME");
+                guestButton.setText(guestName);
             }
         }
     }
