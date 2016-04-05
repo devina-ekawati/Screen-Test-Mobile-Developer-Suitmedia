@@ -16,7 +16,6 @@ public class HomeActivity extends Activity {
 
         Button nextButton = (Button) findViewById(R.id.nextButton);
 
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
