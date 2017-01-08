@@ -14,7 +14,8 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Button nextButton = (Button) findViewById(R.id.nextButton);
+
+        final Button nextButton = (Button) findViewById(R.id.nextButton);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

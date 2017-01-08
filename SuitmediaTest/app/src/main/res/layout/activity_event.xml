@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mycompany.devinaekawati.suitmediatest.EventActivity"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/background">
 
-<ListView
-    android:id="@+id/eventsList"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-</ListView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/eventsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    />
 
 </LinearLayout>

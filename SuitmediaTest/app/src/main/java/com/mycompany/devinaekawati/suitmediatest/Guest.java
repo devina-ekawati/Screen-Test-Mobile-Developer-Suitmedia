@@ -1,31 +1,38 @@
 package com.mycompany.devinaekawati.suitmediatest;
 
+import com.google.gson.annotations.*;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Devina Ekawati on 4/5/2016.
  */
-public class Guest {
-    private int image;
+public class Guest extends RealmObject {
+    @SerializedName("id")
+    @PrimaryKey
+    private int id;
+    @SerializedName("name")
     private String nama;
+    @SerializedName("birthdate")
     private String birthDate;
 
     public Guest() {
-        image = R.drawable.guest;
         nama = "";
     }
 
-    public Guest(int image, String nama, String birthDate) {
-        this.image = image;
+    public Guest(int id, String nama, String birthDate) {
+        this.id = id;
         this.nama = nama;
         this.birthDate = birthDate;
-
     }
 
-    public int getImage() {
-        return image;
+    public int getId() {
+        return id;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNama() {

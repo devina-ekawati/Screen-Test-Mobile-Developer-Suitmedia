@@ -2,6 +2,7 @@ package com.mycompany.devinaekawati.suitmediatest;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +27,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GuestActivity extends AppCompatActivity {
 
     private int resultCode = 2;
     private GuestAdapter adapter;
     private GridView gridView;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +51,59 @@ public class GuestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guest);
         setTitle("Guest");
 
-        new HttpAsyncTask().execute("http://dry-sierra-6832.herokuapp.com/api/people");
+        Realm.init(getApplicationContext());
+        realm = Realm.getDefaultInstance();
 
-        ArrayList<Guest> guests = new ArrayList<>();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://dry-sierra-6832.herokuapp.com/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiInterface service = retrofit.create(ApiInterface.class);
+        Call<List<Guest>> call = service.getGuests();
+
+        call.enqueue(new Callback<List<Guest>>() {
+            @Override
+            public void onResponse(Call<List<Guest>> call, Response<List<Guest>> response) {
+                try {
+                    final List<Guest> results = response.body();
+                    for (int i = 0; i < results.size(); i++) {
+                        adapter.add(new Guest(results.get(i).getId(), results.get(i).getNama(), results.get(i).getBirthDate()));
+
+                        final int finalI = i;
+                        realm.executeTransaction(new Realm.Transaction() {
+
+                            @Override
+                            public void execute(Realm realm) {
+                                Guest guest = realm.createObject(Guest.class, results.get(finalI).getId());
+                                guest.setNama(results.get(finalI).getNama());
+                                guest.setBirthDate(results.get(finalI).getBirthDate());
+                            }
+                        });
+                    }
+
+
+                } catch (Exception e) {
+                    Log.d("onResponse", "There is an error");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Guest>> call, Throwable t) {
+                Log.d("onFailure", t.toString());
+                RealmResults<Guest> results = realm.where(Guest.class).findAll();
+                for (int i = 0; i < results.size(); i++) {
+                    adapter.add(new Guest(results.get(i).getId(), results.get(i).getNama(), results.get(i).getBirthDate()));
+                }
+            }
+        });
+
+        final ArrayList<Guest> guests = new ArrayList<>();
         adapter = new GuestAdapter(this, guests);
 
         gridView = (GridView) findViewById(R.id.guestGridView);
+        gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,62 +134,9 @@ public class GuestActivity extends AppCompatActivity {
         });
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, Void> {
-
-        String response = "";
-
-        @Override
-        protected Void doInBackground(String... location) {
-            URL url = null;
-
-            try {
-                url = new URL(location[0]);
-            } catch (MalformedURLException e) {
-                Log.e("ERROR", "Can't connect to the url");
-            }
-
-            if (url != null) {
-                try {
-                    HttpURLConnection urlconn = (HttpURLConnection) url.openConnection();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlconn.getInputStream()));
-
-                    String inputline;
-
-                    while ((inputline = in.readLine()) != null) {
-                        response += inputline;
-                    }
-
-                    in.close();
-                    urlconn.disconnect();
-                } catch (IOException e) {
-                    Log.e("ERROR", "Can't receive data");
-                }
-            } else {
-                Log.e("ERROR", "Can't connect to the url");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            Log.d("response", response);
-
-            try {
-                JSONArray jsonArray = new JSONArray(response);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String guestName = jsonObject.getString("name");
-                    String guestBirthDate = jsonObject.getString("birthdate");
-
-                    Guest guest = new Guest(R.drawable.guest, guestName, guestBirthDate);
-                    adapter.add(guest);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            gridView.setAdapter(adapter);
-        }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close(); // Remember to close Realm when done.
     }
 }

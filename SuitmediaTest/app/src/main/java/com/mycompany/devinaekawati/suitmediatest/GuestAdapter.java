@@ -32,7 +32,7 @@ public class GuestAdapter extends ArrayAdapter<Guest> {
         TextView namaEvent = (TextView) convertView.findViewById(R.id.guestTextView);
 
         namaEvent.setText(guest.getNama());
-        namaEvent.setBackgroundResource(guest.getImage());
+        namaEvent.setBackgroundResource(R.drawable.guest);
 
         return convertView;
     }

@@ -7,22 +7,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/bg_validation"
     tools:context="com.mycompany.devinaekawati.suitmediatest.HomeActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="Selamat Datang!"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="Sertakan gambar profil Anda untuk melengkapi profil."/>
+
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:src="@drawable/btn_add_photo"/>
 
     <EditText
         android:id="@+id/namaEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_field"
+        android:singleLine="true"
+        android:textColor="#FFFFFF"
         android:hint="masukkan nama"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="30dp"/>
 
     <Button
         android:id="@+id/nextButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorAccent"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/button_background"
         android:textColor="#FFFFFF"
-        android:text="next" />
+        android:text="Selesai" />
+
 </LinearLayout>
